@@ -1,10 +1,11 @@
 @echo off
 
 set CMAKE_ARGS=-G "Visual Studio 16 2019" -A x64
-set BUILD_ARGS=--config Release
+set BUILD_ARGS=--config Release --parallel 8
+set DEPENCENCY_DIR=dependencies
 
-if not exist dependencies mkdir dependencies
-cd dependencies
+if not exist %DEPENCENCY_DIR% mkdir %DEPENCENCY_DIR%
+cd %DEPENCENCY_DIR%
 
 if not exist src mkdir src
 
