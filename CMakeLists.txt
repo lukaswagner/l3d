@@ -13,7 +13,10 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(dep_dir ${CMAKE_SOURCE_DIR}/dependencies)
 set(glfw_dir ${dep_dir}/glfw)
 set(logger_dir ${dep_dir}/logger)
-set(CMAKE_PREFIX_PATH "${glfw_dir}")
+set(glbinding_dir ${dep_dir}/glbinding)
+set(glm_dir ${dep_dir}/glm)
+
+set(CMAKE_PREFIX_PATH "${glfw_dir}" "${glbinding_dir}")
 
 find_package(glfw3)
 if(NOT glfw3_FOUND)
@@ -27,25 +30,48 @@ if(NOT logger)
 endif()
 include_directories(${logger_dir}/include)
 
+find_package(glbinding)
+if(NOT glbinding_FOUND)
+    message(FATAL_ERROR "glbinding not found")
+endif()
+include_directories(${glbinding_dir}/include)
+
 # sources
 
-set(source_dir src)
 set(include_dir include)
+set(source_dir src)
 
 set(shared_include_dir ${include_dir}/shared)
+set(shared_source_dir ${source_dir}/shared)
+set(shared_sources ${shared_source_dir}/shaderManager.cpp)
 
+set(l2d_include_dir ${include_dir}/l2d)
 set(l2d_source_dir ${source_dir}/l2d)
-set(l2d_sources ${l2d_source_dir}/l2d.cpp)
+set(l2d_sources
+    ${l2d_source_dir}/l2d.cpp
+    ${l2d_source_dir}/renderer.cpp)
 
 set(l3d_source_dir ${source_dir}/l3d)
 set(l3d_sources ${l3d_source_dir}/l3d.cpp)
 
 # executables
 
-add_executable(l2d ${l2d_sources})
-target_link_libraries(l2d PRIVATE glfw ${logger})
-target_include_directories(l2d PRIVATE ${shared_include_dir})
+add_executable(l2d ${l2d_sources} ${shared_sources})
+target_link_libraries(l2d PRIVATE glfw ${logger} glbinding::glbinding)
+target_include_directories(l2d
+    PRIVATE ${l2d_include_dir} ${shared_include_dir} ${glm_dir})
 
 add_executable(l3d ${l3d_sources})
-target_link_libraries(l3d PRIVATE glfw ${logger})
-target_include_directories(l3d PRIVATE ${shared_include_dir})
+target_link_libraries(l3d PRIVATE glfw ${logger} glbinding::glbinding)
+target_include_directories(l3d
+    PRIVATE ${shared_include_dir} ${glm_dir})
+
+# dlls for runtime
+if(WIN32)
+    add_custom_command(TARGET l2d POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${glbinding_dir}/glbinding.dll" $<TARGET_FILE_DIR:l2d>)
+    add_custom_command(TARGET l3d POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${glbinding_dir}/glbinding.dll" $<TARGET_FILE_DIR:l3d>)
+endif()

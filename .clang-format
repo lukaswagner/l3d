@@ -1,0 +1,11 @@
+AccessModifierOffset: -4
+AlignAfterOpenBracket: AlwaysBreak
+AlwaysBreakTemplateDeclarations: Yes
+BreakBeforeBraces: Allman
+BreakConstructorInitializers: BeforeComma
+ColumnLimit: 80
+IndentCaseLabels: false
+IndentWidth: 4
+PenaltyReturnTypeOnItsOwnLine: 1000
+PointerAlignment: Left
+UseTab: false
