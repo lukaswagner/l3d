@@ -32,11 +32,20 @@ include_directories(${logger_dir}/include)
 set(source_dir src)
 set(include_dir include)
 
-include_directories(${include_dir})
+set(shared_include_dir ${include_dir}/shared)
 
-set(sources ${source_dir}/l3d.cpp)
+set(l2d_source_dir ${source_dir}/l2d)
+set(l2d_sources ${l2d_source_dir}/l2d.cpp)
 
-# executable
+set(l3d_source_dir ${source_dir}/l3d)
+set(l3d_sources ${l3d_source_dir}/l3d.cpp)
 
-add_executable(l3d ${headers} ${sources})
+# executables
+
+add_executable(l2d ${l2d_sources})
+target_link_libraries(l2d PRIVATE glfw ${logger})
+target_include_directories(l2d PRIVATE ${shared_include_dir})
+
+add_executable(l3d ${l3d_sources})
 target_link_libraries(l3d PRIVATE glfw ${logger})
+target_include_directories(l3d PRIVATE ${shared_include_dir})
