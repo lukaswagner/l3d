@@ -1,21 +1,23 @@
 #define GLFW_INCLUDE_NONE
-#include <GLFW/glfw3.h>
+
 #include <chrono>
 #include <filesystem>
-#include <glbinding-aux/debug.h>
-#include <glbinding/glbinding.h>
-#include <glm/vec2.hpp>
 #include <iostream>
-#include <logger.hpp>
-#include <macros.hpp>
 #include <thread>
 #include <vector>
 
+#include <GLFW/glfw3.h>
+#include <glbinding-aux/debug.h>
+#include <glbinding/glbinding.h>
+#include <glm/vec2.hpp>
+#include <logger.hpp>
+#include <macros.hpp>
+
 #include "ctx.hpp"
-INIT_CTX
 #include "glfwError.hpp"
 #include "renderer.hpp"
 #include "viewer.hpp"
+INIT_CTX
 
 int main(int argc, char const* argv[])
 {

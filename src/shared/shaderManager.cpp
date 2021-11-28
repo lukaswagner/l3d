@@ -1,8 +1,9 @@
 #include "shaderManager.hpp"
 
 #include <fstream>
-#include <logger.hpp>
 #include <sstream>
+
+#include <logger.hpp>
 
 #include "ctx.hpp"
 INIT_CTX

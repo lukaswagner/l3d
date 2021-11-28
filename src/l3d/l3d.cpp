@@ -1,10 +1,12 @@
+#define GLFW_INCLUDE_NONE
+
 #include <GLFW/glfw3.h>
 #include <logger.hpp>
 
 #include "ctx.hpp"
 INIT_CTX
 
-int main(int argc, char const *argv[])
+int main(int argc, char const* argv[])
 {
     logger::enable();
     logger::setContextLength(15);

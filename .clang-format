@@ -4,6 +4,14 @@ AlwaysBreakTemplateDeclarations: Yes
 BreakBeforeBraces: Allman
 BreakConstructorInitializers: BeforeComma
 ColumnLimit: 80
+IncludeBlocks: Regroup
+IncludeCategories:
+  - Regex: '<[^\.]*>'
+    Priority: 1
+  - Regex: '<.*\..*>'
+    Priority: 2
+  - Regex: '".*"'
+    Priority: 3
 IndentCaseLabels: false
 IndentWidth: 4
 PenaltyReturnTypeOnItsOwnLine: 1000

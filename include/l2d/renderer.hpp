@@ -1,11 +1,13 @@
 #pragma once
 
 #define GLFW_INCLUDE_NONE
-#include <GLFW/glfw3.h>
+
 #include <filesystem>
+#include <string>
+
+#include <GLFW/glfw3.h>
 #include <glbinding/gl/gl.h>
 #include <glm/vec2.hpp>
-#include <string>
 
 #include "shaderManager.hpp"
 

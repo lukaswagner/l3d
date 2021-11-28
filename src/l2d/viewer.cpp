@@ -1,7 +1,8 @@
 #include "viewer.hpp"
 
-#include <glbinding/gl/gl.h>
 #include <iostream>
+
+#include <glbinding/gl/gl.h>
 #include <logger.hpp>
 #include <macros.hpp>
 
