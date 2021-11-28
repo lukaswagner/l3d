@@ -16,6 +16,7 @@ Renderer::Renderer(glm::uvec2 resolution, std::filesystem::path shaderPath)
     , m_vertexSource(m_shaderManager.vertexSource(
           m_shaderManager.availableVertexShaders()[0]))
 {
+    // rbo & fbo
     glGenRenderbuffers(1, &m_rbo);
     glBindRenderbuffer(GL_RENDERBUFFER, m_rbo);
     glRenderbufferStorage(
@@ -35,6 +36,7 @@ Renderer::Renderer(glm::uvec2 resolution, std::filesystem::path shaderPath)
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
+    // shaders
     const auto frag = m_shaderManager.fragmentSource(
         m_shaderManager.availableFragmentShaders()[0]);
     m_program = createProgram(frag);
@@ -44,6 +46,7 @@ Renderer::Renderer(glm::uvec2 resolution, std::filesystem::path shaderPath)
         return;
     }
 
+    // geometry
     glGenBuffers(1, &m_vbo);
     glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
     glBufferData(
@@ -128,9 +131,8 @@ bool Renderer::ready() { return m_ready; }
 
 void Renderer::frame()
 {
-    logger::info(CTX) << "frame";
     glViewport(0, 0, m_resolution.x, m_resolution.y);
-    DEBUG_EXPR(glBindFramebuffer(GL_FRAMEBUFFER, m_fbo));
+    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
     glUseProgram(m_program);
     glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
 
@@ -138,8 +140,7 @@ void Renderer::frame()
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glUseProgram(0);
-    DEBUG_EXPR(glBindFramebuffer(GL_FRAMEBUFFER, 0));
-    logger::info(CTX) << "end frame";
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 GLuint Renderer::fbo() { return m_fbo; }

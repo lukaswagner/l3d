@@ -21,8 +21,11 @@ INIT_CTX
 
 int main(int argc, char const* argv[])
 {
+    // init logger
     logger::enable(logger::Level::Debug);
     logger::setContextLength(20);
+
+    // init glfw
     logger::info(CTX) << "Initializing OpenGL context...";
     if (!glfwInit())
     {
@@ -36,14 +39,17 @@ int main(int argc, char const* argv[])
     auto window = glfwCreateWindow(1, 1, "", nullptr, nullptr);
     glfwDefaultWindowHints();
     glfwMakeContextCurrent(window);
-    glbinding::initialize(glfwGetProcAddress);
 
+    // init glbinding
+    glbinding::initialize(glfwGetProcAddress);
     glbinding::aux::enableGetErrorCallback();
 
+    // init shader manager
     auto shaderDir = std::filesystem::path(__FILE__).remove_filename() /
                      std::filesystem::path("../../shader/2d");
     shaderDir = shaderDir.lexically_normal().make_preferred();
 
+    // init renderer
     glm::uvec2 renderResolution{10, 10};
     Renderer renderer(renderResolution, shaderDir);
     if (!renderer.ready())
@@ -53,34 +59,23 @@ int main(int argc, char const* argv[])
     }
     logger::info(CTX) << "Renderer init successful.";
 
+    // init viewer
     Viewer viewer(
         renderer.rbo(), renderResolution, renderResolution * 50u,
         "Render output", window);
     logger::info(CTX) << "Viewer init successful.";
 
+    // render loop
     while (true)
     {
         glfwMakeContextCurrent(window);
         renderer.frame();
 
-        // DEBUG_EXPR(glBindFramebuffer(GL_READ_FRAMEBUFFER, renderer.fbo()));
-        // std::vector<float> buf(renderResolution.x * renderResolution.y * 4);
-        // glReadPixels(
-        //     0, 0, renderResolution.x, renderResolution.y, GL_RGBA, GL_FLOAT,
-        //     buf.data());
-        // DEBUG_EXPR(glBindFramebuffer(GL_READ_FRAMEBUFFER, 0));
-        // auto line = logger::info(CTX);
-        // for (const auto pixel : buf)
-        // {
-        //     line << pixel << " ";
-        // }
-        // glFinish();
-        // std::cout << std::flush;
-
         viewer.frame();
         std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     }
 
+    // clean up
     glfwTerminate();
     return 0;
 }

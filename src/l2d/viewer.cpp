@@ -39,12 +39,11 @@ Viewer::Viewer(
 
 void Viewer::frame()
 {
-    logger::info(CTX) << "frame";
     glfwMakeContextCurrent(m_window);
     glViewport(0, 0, m_outputResolution.x, m_outputResolution.y);
-    DEBUG_EXPR(glBindFramebuffer(GL_READ_FRAMEBUFFER, m_fbo));
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, m_fbo);
     glReadBuffer(GL_COLOR_ATTACHMENT0);
-    DEBUG_EXPR(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0));
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
     glDrawBuffer(GL_BACK);
 
     glBlitFramebuffer(
@@ -52,22 +51,7 @@ void Viewer::frame()
         m_outputResolution.x, m_outputResolution.y, GL_COLOR_BUFFER_BIT,
         GL_NEAREST);
 
-    DEBUG_EXPR(glBindFramebuffer(GL_READ_FRAMEBUFFER, 0));
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
 
     glfwSwapBuffers(m_window);
-    logger::info(CTX) << "end frame";
-
-    // DEBUG_EXPR(glBindFramebuffer(GL_READ_FRAMEBUFFER, m_fbo));
-    // std::vector<float> buf(m_inputResolution.x * m_inputResolution.y * 4);
-    // glReadPixels(
-    //     0, 0, m_inputResolution.x, m_inputResolution.y, GL_RGBA, GL_FLOAT,
-    //     buf.data());
-    // DEBUG_EXPR(glBindFramebuffer(GL_READ_FRAMEBUFFER, 0));
-    // auto line = logger::info(CTX);
-    // for (const auto pixel : buf)
-    // {
-    //     line << pixel << " ";
-    // }
-    // glFinish();
-    // std::cout << std::flush;
 }
