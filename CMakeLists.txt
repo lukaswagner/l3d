@@ -49,7 +49,8 @@ set(l2d_include_dir ${include_dir}/l2d)
 set(l2d_source_dir ${source_dir}/l2d)
 set(l2d_sources
     ${l2d_source_dir}/l2d.cpp
-    ${l2d_source_dir}/renderer.cpp)
+    ${l2d_source_dir}/renderer.cpp
+    ${l2d_source_dir}/viewer.cpp)
 
 set(l3d_source_dir ${source_dir}/l3d)
 set(l3d_sources ${l3d_source_dir}/l3d.cpp)
@@ -57,7 +58,7 @@ set(l3d_sources ${l3d_source_dir}/l3d.cpp)
 # executables
 
 add_executable(l2d ${l2d_sources} ${shared_sources})
-target_link_libraries(l2d PRIVATE glfw ${logger} glbinding::glbinding)
+target_link_libraries(l2d PRIVATE glfw ${logger} glbinding::glbinding glbinding::glbinding-aux)
 target_include_directories(l2d
     PRIVATE ${l2d_include_dir} ${shared_include_dir} ${glm_dir})
 
@@ -71,6 +72,9 @@ if(WIN32)
     add_custom_command(TARGET l2d POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
             "${glbinding_dir}/glbinding.dll" $<TARGET_FILE_DIR:l2d>)
+    add_custom_command(TARGET l2d POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${glbinding_dir}/glbinding-aux.dll" $<TARGET_FILE_DIR:l2d>)
     add_custom_command(TARGET l3d POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
             "${glbinding_dir}/glbinding.dll" $<TARGET_FILE_DIR:l3d>)

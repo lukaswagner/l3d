@@ -1,13 +1,14 @@
 #include "renderer.hpp"
 
 #include <logger.hpp>
+#include <macros.hpp>
 
 #include "ctx.hpp"
 INIT_CTX
 
 using namespace gl;
 
-float Renderer::s_vertices[] = {0, 0, 0, 2, 2, 0};
+float Renderer::s_vertices[] = {-1, -1, -1, 3, 3, -1};
 
 Renderer::Renderer(glm::uvec2 resolution, std::filesystem::path shaderPath)
     : m_resolution(resolution)
@@ -31,7 +32,7 @@ Renderer::Renderer(glm::uvec2 resolution, std::filesystem::path shaderPath)
         return;
     }
 
-    glBindFramebuffer(GL_RENDERBUFFER, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
     const auto frag = m_shaderManager.fragmentSource(
@@ -47,11 +48,11 @@ Renderer::Renderer(glm::uvec2 resolution, std::filesystem::path shaderPath)
     glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
     glBufferData(
         GL_ARRAY_BUFFER, sizeof(s_vertices), s_vertices, GL_STATIC_DRAW);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     auto vertexLoc = glGetAttribLocation(m_program, "a_vertex");
     glEnableVertexAttribArray(vertexLoc);
     glVertexAttribPointer(vertexLoc, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     m_ready = true;
 }
@@ -127,14 +128,19 @@ bool Renderer::ready() { return m_ready; }
 
 void Renderer::frame()
 {
+    logger::info(CTX) << "frame";
     glViewport(0, 0, m_resolution.x, m_resolution.y);
-    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+    DEBUG_EXPR(glBindFramebuffer(GL_FRAMEBUFFER, m_fbo));
     glUseProgram(m_program);
     glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
 
-    glDrawBuffer(GL_ARRAY_BUFFER);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glUseProgram(0);
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    DEBUG_EXPR(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+    logger::info(CTX) << "end frame";
 }
+
+GLuint Renderer::fbo() { return m_fbo; }
+GLuint Renderer::rbo() { return m_rbo; }
