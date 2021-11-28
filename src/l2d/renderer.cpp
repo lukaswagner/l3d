@@ -13,8 +13,7 @@ float Renderer::s_vertices[] = {-1, -1, -1, 3, 3, -1};
 Renderer::Renderer(glm::uvec2 resolution, std::filesystem::path shaderPath)
     : m_resolution(resolution)
     , m_shaderManager(shaderPath)
-    , m_vertexSource(m_shaderManager.vertexSource(
-          m_shaderManager.availableVertexShaders()[0]))
+    , m_vertexSource("passthrough")
 {
     // rbo & fbo
     glGenRenderbuffers(1, &m_rbo);
@@ -37,8 +36,7 @@ Renderer::Renderer(glm::uvec2 resolution, std::filesystem::path shaderPath)
     glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
     // shaders
-    const auto frag = m_shaderManager.fragmentSource(
-        m_shaderManager.availableFragmentShaders()[0]);
+    const auto frag = m_shaderManager.availableFragmentShaders()[0];
     m_program = createProgram(frag);
     if (m_program == 0)
     {
@@ -60,41 +58,10 @@ Renderer::Renderer(glm::uvec2 resolution, std::filesystem::path shaderPath)
     m_ready = true;
 }
 
-void logShaderError(GLuint shader, GLenum type)
+GLuint Renderer::createProgram(std::string fragmentName)
 {
-    GLint maxLength = 0;
-    glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &maxLength);
-    std::vector<GLchar> infoLog(maxLength);
-    glGetShaderInfoLog(shader, maxLength, &maxLength, &infoLog[0]);
-    // -2 to avoid final lf and null byte
-    auto log = std::string(infoLog.begin(), infoLog.end() - 2);
-    auto typeString = type == GL_VERTEX_SHADER ? "Vertex" : "Fragment";
-    logger::warning(CTX) << typeString << " shader compilation error:\n" << log;
-}
-
-GLuint compileShader(GLenum type, std::string source)
-{
-    auto shader = gl::glCreateShader(type);
-    const auto str = source.c_str();
-    glShaderSource(shader, 1, &str, nullptr);
-    glCompileShader(shader);
-
-    GLint success;
-    glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
-    if (!success)
-    {
-        logShaderError(shader, type);
-        glDeleteShader(shader);
-        return 0;
-    }
-
-    return shader;
-}
-
-GLuint Renderer::createProgram(std::string fragmentSource)
-{
-    auto vert = compileShader(GL_VERTEX_SHADER, m_vertexSource);
-    auto frag = compileShader(GL_FRAGMENT_SHADER, fragmentSource);
+    auto vert = m_shaderManager.compileVertex(m_vertexSource);
+    auto frag = m_shaderManager.compileFragment(fragmentName);
 
     if (vert == 0 || frag == 0)
     {
@@ -119,8 +86,6 @@ GLuint Renderer::createProgram(std::string fragmentSource)
         logger::warning(CTX) << "Program linking error:\n" << log;
 
         glDeleteProgram(program);
-        glDeleteShader(vert);
-        glDeleteShader(frag);
         return 0;
     }
 
