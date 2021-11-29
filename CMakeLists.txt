@@ -50,7 +50,10 @@ set(l2d_source_dir ${source_dir}/l2d)
 set(l2d_sources
     ${l2d_source_dir}/l2d.cpp
     ${l2d_source_dir}/renderer.cpp
-    ${l2d_source_dir}/viewer.cpp)
+    ${l2d_source_dir}/viewer.cpp
+    ${l2d_source_dir}/effectPass.cpp
+    ${l2d_source_dir}/fadePass.cpp
+    ${l2d_source_dir}/program.cpp)
 
 set(l3d_source_dir ${source_dir}/l3d)
 set(l3d_sources ${l3d_source_dir}/l3d.cpp)

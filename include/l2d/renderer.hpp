@@ -11,17 +11,13 @@
 #include <glbinding/gl/gl.h>
 #include <glm/vec2.hpp>
 
+#include "effectPass.hpp"
+#include "fadePass.hpp"
 #include "shaderManager.hpp"
 
 using namespace gl;
 
-struct Program
-{
-    GLuint handle;
-    bool valid;
-};
-
-using ProgramMap = std::map<std::string, Program>;
+using ProgramMap = std::map<std::string, EffectProgram>;
 using ProgramIt = ProgramMap::iterator;
 
 struct FadeUniforms
@@ -39,23 +35,18 @@ protected:
     glm::uvec2 m_resolution;
     ShaderManager m_shaderManager;
 
-    GLuint m_renderTextures[2];
-    GLuint m_resultRenderbuffer;
-    GLuint m_framebuffers[3];
+    GLuint m_geometry;
 
-    GLuint m_vertexBuffer;
+    EffectPass m_effectPasses[2];
+    FadePass m_fadePass;
 
-    std::string m_vertexSource;
     ProgramMap m_programs;
     ProgramIt m_currentProgram;
     ProgramIt m_nextProgram;
 
-    GLuint m_fadeProgram;
-    FadeUniforms m_fadeUniforms;
     std::chrono::milliseconds m_fadeDuration;
     std::chrono::milliseconds m_currentFade;
 
-    GLuint createProgram(std::string source);
     ProgramIt nextProgram(ProgramIt start);
     ProgramIt nextValidProgram(ProgramIt start);
 
@@ -64,6 +55,6 @@ public:
     bool ready();
     void frame(std::chrono::milliseconds deltaT);
     void startFade();
-    GLuint resultFramebuffer();
-    GLuint resultRanderbuffer();
+    GLuint framebuffer();
+    GLuint renderbuffer();
 };

@@ -61,18 +61,20 @@ int main(int argc, char const* argv[])
 
     // init viewer
     Viewer viewer(
-        renderer.resultRanderbuffer(), renderResolution, renderResolution * 50u,
+        renderer.renderbuffer(), renderResolution, renderResolution * 50u,
         "Render output", window);
     logger::info(CTX) << "Viewer init successful.";
 
+    renderer.startFade();
+    auto deltaT = std::chrono::milliseconds(10);
     // render loop
     while (true)
     {
         glfwMakeContextCurrent(window);
-        renderer.frame(std::chrono::milliseconds(0));
+        renderer.frame(deltaT);
 
         viewer.frame();
-        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+        std::this_thread::sleep_for(deltaT);
     }
 
     // clean up
