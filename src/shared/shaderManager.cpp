@@ -26,12 +26,13 @@ std::vector<std::string> ShaderManager::availableShaders(GLenum type)
     const auto path = m_path.at(type);
     const auto ext = m_ext.at(type);
     std::vector<std::string> result;
-    for (auto const& file : std::filesystem::directory_iterator{path})
+    for (auto const& file : std::filesystem::recursive_directory_iterator{path})
     {
-        const auto path = file.path();
-        if (path.extension().string() == ext)
+        const auto p = file.path();
+        if (p.extension().string() == ext)
         {
-            result.push_back(path.stem().string());
+            result.push_back(
+                p.lexically_relative(path).replace_extension("").string());
         }
     }
 

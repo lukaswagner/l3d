@@ -61,7 +61,7 @@ int main(int argc, char const* argv[])
 
     // init viewer
     Viewer viewer(
-        renderer.rbo(), renderResolution, renderResolution * 50u,
+        renderer.resultRanderbuffer(), renderResolution, renderResolution * 50u,
         "Render output", window);
     logger::info(CTX) << "Viewer init successful.";
 
@@ -69,7 +69,7 @@ int main(int argc, char const* argv[])
     while (true)
     {
         glfwMakeContextCurrent(window);
-        renderer.frame();
+        renderer.frame(std::chrono::milliseconds(0));
 
         viewer.frame();
         std::this_thread::sleep_for(std::chrono::milliseconds(1000));
