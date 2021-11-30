@@ -39,6 +39,18 @@ Viewer::Viewer(
 
 void Viewer::frame()
 {
+    if (m_window == nullptr)
+    {
+        return;
+    }
+
+    if (glfwWindowShouldClose(m_window))
+    {
+        glfwDestroyWindow(m_window);
+        m_window = nullptr;
+        return;
+    }
+
     glfwMakeContextCurrent(m_window);
     glViewport(0, 0, m_outputResolution.x, m_outputResolution.y);
     glBindFramebuffer(GL_READ_FRAMEBUFFER, m_fbo);

@@ -79,7 +79,7 @@ int main(int argc, char const* argv[])
     Delta lastFrameDelta;
 
     // render loop
-    while (true)
+    while (!glfwWindowShouldClose(window))
     {
         auto delta = lastFrameDelta.step();
         if (fadeInterval.step())
@@ -100,10 +100,12 @@ int main(int argc, char const* argv[])
             fpsCount = 0;
         }
 
+        glfwPollEvents();
         fpsLimiter.step();
     }
 
     // clean up
+    glfwDestroyWindow(window);
     glfwTerminate();
     return 0;
 }
