@@ -43,7 +43,9 @@ set(source_dir src)
 
 set(shared_include_dir ${include_dir}/shared)
 set(shared_source_dir ${source_dir}/shared)
-set(shared_sources ${shared_source_dir}/shaderManager.cpp)
+set(shared_sources
+    ${shared_source_dir}/shaderManager.cpp
+    ${shared_source_dir}/timer.cpp)
 
 set(l2d_include_dir ${include_dir}/l2d)
 set(l2d_source_dir ${source_dir}/l2d)

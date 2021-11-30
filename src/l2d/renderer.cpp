@@ -17,34 +17,28 @@ float Renderer::s_vertices[] = {-1, -1, -1, 3, 3, -1};
 
 ProgramIt Renderer::nextProgram(ProgramIt start)
 {
-    // logger::info(CTX) << "nextProgram start " << start->first;
     auto next = std::next(start);
-    // logger::info(CTX) << "nextProgram next " << next->first;
     if (next == m_programs.end())
     {
         next = m_programs.begin();
     }
-    // logger::info(CTX) << "nextProgram result " << next->first;
     return next;
 }
 
 ProgramIt Renderer::nextValidProgram(ProgramIt start)
 {
-    // logger::info(CTX) << "nextValidProgram start " << start->first;
     auto next = start;
     do
     {
         next = nextProgram(start);
-        // logger::info(CTX) << "nextValidProgram next " << next->first;
     } while (!next->second.valid && next != start);
-    // logger::info(CTX) << "nextValidProgram result " << next->first;
     return next;
 }
 
 Renderer::Renderer(glm::uvec2 resolution, std::filesystem::path shaderPath)
     : m_resolution(resolution)
     , m_shaderManager(shaderPath)
-    , m_fadeDuration(1000ms)
+    , m_fadeDuration(500ms)
 {
     // geometry
     glGenBuffers(1, &m_geometry);

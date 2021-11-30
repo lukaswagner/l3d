@@ -16,8 +16,11 @@
 #include "ctx.hpp"
 #include "glfwError.hpp"
 #include "renderer.hpp"
+#include "timer.hpp"
 #include "viewer.hpp"
 INIT_CTX
+
+using namespace std::chrono_literals;
 
 int main(int argc, char const* argv[])
 {
@@ -66,15 +69,39 @@ int main(int argc, char const* argv[])
     logger::info(CTX) << "Viewer init successful.";
 
     renderer.startFade();
-    auto deltaT = std::chrono::milliseconds(10);
+
+    unsigned int fpsCount = 0;
+    auto fpsLogTime = 5s;
+    auto fpsLogTimeInv = 1.0f / fpsLogTime.count();
+    Interval fpsLogInterval(fpsLogTime);
+    Interval fadeInterval(5s);
+    Limiter fpsLimiter(30);
+    Delta lastFrameDelta;
+
     // render loop
     while (true)
     {
+        auto delta = lastFrameDelta.step();
+        // logger::info(CTX) << "delta " << delta.count();
+        if (fadeInterval.step())
+        {
+            renderer.startFade();
+        }
+
         glfwMakeContextCurrent(window);
-        renderer.frame(deltaT);
+        renderer.frame(
+            std::chrono::duration_cast<std::chrono::milliseconds>(delta));
 
         viewer.frame();
-        std::this_thread::sleep_for(deltaT);
+
+        fpsCount++;
+        if (fpsLogInterval.step())
+        {
+            logger::info(CTX) << "FPS: " << fpsCount * fpsLogTimeInv;
+            fpsCount = 0;
+        }
+
+        fpsLimiter.step();
     }
 
     // clean up
