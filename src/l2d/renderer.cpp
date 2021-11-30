@@ -36,10 +36,12 @@ ProgramIt Renderer::nextValidProgram(ProgramIt start)
     return next;
 }
 
-Renderer::Renderer(glm::uvec2 resolution, std::filesystem::path shaderPath)
+Renderer::Renderer(
+    glm::uvec2 resolution, std::filesystem::path shaderPath,
+    std::chrono::milliseconds fadeDuration)
     : m_resolution(resolution)
     , m_shader(shaderPath)
-    , m_fadeDuration(200ms)
+    , m_fadeDuration(fadeDuration)
 {
     // geometry
     glGenBuffers(1, &m_geometry);

@@ -51,7 +51,9 @@ protected:
     ProgramIt nextValidProgram(ProgramIt start);
 
 public:
-    Renderer(glm::uvec2 resolution, std::filesystem::path shaderPath);
+    Renderer(
+        glm::uvec2 resolution, std::filesystem::path shaderPath,
+        std::chrono::milliseconds fadeDuration);
     bool ready();
     void frame(std::chrono::milliseconds deltaT);
     void startFade();

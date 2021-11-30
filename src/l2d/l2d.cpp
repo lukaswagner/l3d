@@ -6,6 +6,7 @@
 #include <thread>
 #include <vector>
 
+#include <CLI/CLI.hpp>
 #include <GLFW/glfw3.h>
 #include <glbinding-aux/debug.h>
 #include <glbinding/glbinding.h>
@@ -15,6 +16,7 @@
 
 #include "ctx.hpp"
 #include "glfwError.hpp"
+#include "options.hpp"
 #include "renderer.hpp"
 #include "timer.hpp"
 #include "viewer.hpp"
@@ -24,9 +26,16 @@ using namespace std::chrono_literals;
 
 int main(int argc, char const* argv[])
 {
+    // get configuration
+    CLI::App app{"2D GLSL shader renderer", "l2d"};
+    defineOptions(app);
+    CLI11_PARSE(app, argc, argv);
+
     // init logger
-    logger::enable(logger::Level::Debug);
+    logger::enable(g_options.logLevel, g_options.logLevel);
     logger::setContextLength(20);
+
+    logger::info(CTX) << g_options.shaderDir;
 
     // init glfw
     logger::info(CTX) << "Initializing OpenGL context...";
@@ -48,13 +57,14 @@ int main(int argc, char const* argv[])
     glbinding::aux::enableGetErrorCallback();
 
     // init shader manager
-    auto shaderDir = std::filesystem::path(__FILE__).remove_filename() /
-                     std::filesystem::path("../../shader/2d");
+    auto shaderDir = std::filesystem::path(g_options.shaderDir);
     shaderDir = shaderDir.lexically_normal().make_preferred();
 
     // init renderer
     glm::uvec2 renderResolution{10, 10};
-    Renderer renderer(renderResolution, shaderDir);
+    Renderer renderer(
+        renderResolution, shaderDir,
+        std::chrono::milliseconds(g_options.fadeDurationMs));
     if (!renderer.ready())
     {
         logger::error(CTX) << "Could not initialize renderer.";
@@ -71,11 +81,10 @@ int main(int argc, char const* argv[])
     renderer.startFade();
 
     unsigned int fpsCount = 0;
-    auto fpsLogTime = 10s;
-    auto fpsLogTimeInv = 1.0f / fpsLogTime.count();
-    Interval fpsLogInterval(fpsLogTime);
-    Interval fadeInterval(3s);
-    Limiter fpsLimiter(30);
+    Interval fpsLogInterval(std::chrono::seconds(g_options.fpsLogIntervalS));
+    auto fpsLogIntervalInv = 1.0f / g_options.fpsLogIntervalS;
+    Interval fadeInterval(std::chrono::seconds(g_options.fadeIntervalS));
+    Limiter fpsLimiter(g_options.framerate);
     Delta lastFrameDelta;
 
     // render loop
@@ -96,7 +105,7 @@ int main(int argc, char const* argv[])
         fpsCount++;
         if (fpsLogInterval.step())
         {
-            logger::info(CTX) << "FPS: " << fpsCount * fpsLogTimeInv;
+            logger::info(CTX) << "FPS: " << fpsCount * fpsLogIntervalInv;
             fpsCount = 0;
         }
 

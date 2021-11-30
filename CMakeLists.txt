@@ -15,6 +15,7 @@ set(glfw_dir ${dep_dir}/glfw)
 set(logger_dir ${dep_dir}/logger)
 set(glbinding_dir ${dep_dir}/glbinding)
 set(glm_dir ${dep_dir}/glm)
+set(cli11_dir ${dep_dir}/cli11)
 
 set(CMAKE_PREFIX_PATH "${glfw_dir}" "${glbinding_dir}")
 
@@ -36,6 +37,8 @@ if(NOT glbinding_FOUND)
 endif()
 include_directories(${glbinding_dir}/include)
 
+include_directories(${cli11_dir}/include)
+
 # sources
 
 set(include_dir include)
@@ -51,11 +54,12 @@ set(l2d_include_dir ${include_dir}/l2d)
 set(l2d_source_dir ${source_dir}/l2d)
 set(l2d_sources
     ${l2d_source_dir}/l2d.cpp
-    ${l2d_source_dir}/renderer.cpp
-    ${l2d_source_dir}/viewer.cpp
     ${l2d_source_dir}/effectPass.cpp
     ${l2d_source_dir}/fadePass.cpp
-    ${l2d_source_dir}/program.cpp)
+    ${l2d_source_dir}/program.cpp
+    ${l2d_source_dir}/options.cpp
+    ${l2d_source_dir}/renderer.cpp
+    ${l2d_source_dir}/viewer.cpp)
 
 set(l3d_source_dir ${source_dir}/l3d)
 set(l3d_sources ${l3d_source_dir}/l3d.cpp)
