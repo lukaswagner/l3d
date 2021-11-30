@@ -71,10 +71,10 @@ int main(int argc, char const* argv[])
     renderer.startFade();
 
     unsigned int fpsCount = 0;
-    auto fpsLogTime = 5s;
+    auto fpsLogTime = 10s;
     auto fpsLogTimeInv = 1.0f / fpsLogTime.count();
     Interval fpsLogInterval(fpsLogTime);
-    Interval fadeInterval(5s);
+    Interval fadeInterval(3s);
     Limiter fpsLimiter(30);
     Delta lastFrameDelta;
 
@@ -82,7 +82,6 @@ int main(int argc, char const* argv[])
     while (true)
     {
         auto delta = lastFrameDelta.step();
-        // logger::info(CTX) << "delta " << delta.count();
         if (fadeInterval.step())
         {
             renderer.startFade();

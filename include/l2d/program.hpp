@@ -2,9 +2,8 @@
 
 #include <glbinding/gl/gl.h>
 
-#include "shaderManager.hpp"
+#include "shader.hpp"
 
 using namespace gl;
 
-GLuint createProgram(
-    ShaderManager& shaders, std::string vert, std::string frag);
+GLuint createProgram(GLuint vert, GLuint frag);

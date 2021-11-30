@@ -3,12 +3,13 @@
 #include <logger.hpp>
 
 #include "ctx.hpp"
+#include "data.hpp"
 #include "program.hpp"
 INIT_CTX
 
 FadePass::FadePass(
     glm::uvec2 resolution, GLuint geometry, GLuint texture0, GLuint texture1,
-    ShaderManager& shaders)
+    Shader& shader)
     : m_resolution(resolution)
     , m_geometry(geometry)
     , m_texture0(texture0)
@@ -32,7 +33,10 @@ FadePass::FadePass(
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
-    auto program = createProgram(shaders, "passthrough", "fade");
+    shader.addVirtual("fade", fade_frag);
+    auto program = createProgram(
+        shader.compileVirtual("passthrough", GL_VERTEX_SHADER),
+        shader.compileVirtual("fade", GL_FRAGMENT_SHADER));
     if (program == 0)
     {
         logger::error(CTX) << "Fade program invalid.";

@@ -3,7 +3,7 @@
 #include <glbinding/gl/gl.h>
 #include <glm/vec2.hpp>
 
-#include "shaderManager.hpp"
+#include "shader.hpp"
 
 using namespace gl;
 
@@ -31,7 +31,7 @@ protected:
 public:
     FadePass(
         glm::uvec2 resolution, GLuint geometry, GLuint texture0,
-        GLuint texture1, ShaderManager& shaders);
+        GLuint texture1, Shader& shader);
     FadePass() = default;
     bool ready();
     void frame(float mixFactor);

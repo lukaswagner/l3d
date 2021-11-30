@@ -13,7 +13,7 @@
 
 #include "effectPass.hpp"
 #include "fadePass.hpp"
-#include "shaderManager.hpp"
+#include "shader.hpp"
 
 using namespace gl;
 
@@ -33,7 +33,7 @@ protected:
     static float s_vertices[];
     bool m_ready = false;
     glm::uvec2 m_resolution;
-    ShaderManager m_shaderManager;
+    Shader m_shader;
 
     GLuint m_geometry;
 

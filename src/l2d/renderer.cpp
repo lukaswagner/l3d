@@ -7,6 +7,7 @@
 #include <macros.hpp>
 
 #include "ctx.hpp"
+#include "data.hpp"
 #include "program.hpp"
 INIT_CTX
 
@@ -37,8 +38,8 @@ ProgramIt Renderer::nextValidProgram(ProgramIt start)
 
 Renderer::Renderer(glm::uvec2 resolution, std::filesystem::path shaderPath)
     : m_resolution(resolution)
-    , m_shaderManager(shaderPath)
-    , m_fadeDuration(500ms)
+    , m_shader(shaderPath)
+    , m_fadeDuration(200ms)
 {
     // geometry
     glGenBuffers(1, &m_geometry);
@@ -46,24 +47,23 @@ Renderer::Renderer(glm::uvec2 resolution, std::filesystem::path shaderPath)
     glBufferData(
         GL_ARRAY_BUFFER, sizeof(s_vertices), s_vertices, GL_STATIC_DRAW);
 
+    // shared shader
+    m_shader.addVirtual("passthrough", passthrough_vert);
+
     // passes
     m_effectPasses[0] = EffectPass(resolution, m_geometry);
     m_effectPasses[1] = EffectPass(resolution, m_geometry);
     m_fadePass = FadePass(
         resolution, m_geometry, m_effectPasses[0].texture(),
-        m_effectPasses[1].texture(), m_shaderManager);
+        m_effectPasses[1].texture(), m_shader);
 
     // shaders
-    const auto shaders = m_shaderManager.availableFragmentShaders();
-    std::regex regex("^effects[\\/\\\\]?");
+    const auto shaders = m_shader.shaders();
     for (const auto& shader : shaders)
     {
-        if (!std::regex_search(shader, regex))
-        {
-            continue;
-        }
-
-        auto program = createProgram(m_shaderManager, "passthrough", shader);
+        auto program = createProgram(
+            m_shader.compileVirtual("passthrough", GL_VERTEX_SHADER),
+            m_shader.compile(shader));
         auto vertexLoc = glGetAttribLocation(program, "a_vertex");
         glEnableVertexAttribArray(vertexLoc);
         glVertexAttribPointer(vertexLoc, 2, GL_FLOAT, GL_FALSE, 0, nullptr);

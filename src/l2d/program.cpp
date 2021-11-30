@@ -1,16 +1,16 @@
 #include "program.hpp"
 
+#include <glbinding/gl/gl.h>
 #include <logger.hpp>
 
 #include "ctx.hpp"
 INIT_CTX
 
-GLuint createProgram(
-    ShaderManager& shaders, std::string vertex, std::string fragment)
-{
-    auto vert = shaders.compileVertex(vertex);
-    auto frag = shaders.compileFragment(fragment);
+using namespace gl;
 
+GLuint createProgram(GLuint vert, GLuint frag)
+{
+    logger::info(CTX) << vert << " " << frag;
     if (vert == 0 || frag == 0)
     {
         return 0;

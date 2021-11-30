@@ -44,7 +44,7 @@ set(source_dir src)
 set(shared_include_dir ${include_dir}/shared)
 set(shared_source_dir ${source_dir}/shared)
 set(shared_sources
-    ${shared_source_dir}/shaderManager.cpp
+    ${shared_source_dir}/shader.cpp
     ${shared_source_dir}/timer.cpp)
 
 set(l2d_include_dir ${include_dir}/l2d)
@@ -60,12 +60,35 @@ set(l2d_sources
 set(l3d_source_dir ${source_dir}/l3d)
 set(l3d_sources ${l3d_source_dir}/l3d.cpp)
 
+# embedded data
+
+set(data_dir ${CMAKE_CURRENT_SOURCE_DIR}/data)
+set(generated_dir ${CMAKE_CURRENT_BINARY_DIR}/generated)
+
+# https://stackoverflow.com/a/47801116
+function(make_includable file)
+    set(input_file ${data_dir}/${file})
+    set(output_file ${generated_dir}/${file})
+    file(READ ${input_file} content)
+    set(delim "EMBEDDED_DATA")
+    string(REGEX REPLACE ^[^/]*/ "" varName ${file})
+    string(REGEX REPLACE [^A-Za-z0-9_] _ varName ${varName})
+    set(content "constexpr char* ${varName} = R\"${delim}(\n${content})${delim}\";")
+    file(WRITE ${output_file} "${content}")
+endfunction(make_includable)
+
+file(GLOB_RECURSE data_files RELATIVE ${data_dir} ${data_dir}/*)
+
+foreach(file ${data_files})
+    make_includable(${file})
+endforeach()
+
 # executables
 
 add_executable(l2d ${l2d_sources} ${shared_sources})
 target_link_libraries(l2d PRIVATE glfw ${logger} glbinding::glbinding glbinding::glbinding-aux)
 target_include_directories(l2d
-    PRIVATE ${l2d_include_dir} ${shared_include_dir} ${glm_dir})
+    PRIVATE ${l2d_include_dir} ${shared_include_dir} ${glm_dir} ${generated_dir}/l2d)
 
 add_executable(l3d ${l3d_sources})
 target_link_libraries(l3d PRIVATE glfw ${logger} glbinding::glbinding)
