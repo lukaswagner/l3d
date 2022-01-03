@@ -6,7 +6,7 @@
 #include <logger.hpp>
 #include <macros.hpp>
 
-#include "ctx.hpp"
+#include "logUtil.hpp"
 INIT_CTX
 
 using namespace gl;

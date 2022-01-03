@@ -25,13 +25,13 @@ protected:
     SourceMap m_virtualSources;
     CompiledMap m_virtualCompiled;
 
-    std::string source(std::string name);
     GLuint compile(std::string name, std::string source, GLenum type);
 
 public:
     Shader(std::filesystem::path path);
 
     FileList& shaders();
+    std::string source(std::string name);
     GLuint compile(std::string name, GLenum type = GL_FRAGMENT_SHADER);
 
     void addVirtual(std::string name, std::string source);

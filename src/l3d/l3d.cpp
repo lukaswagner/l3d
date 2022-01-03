@@ -3,7 +3,7 @@
 #include <GLFW/glfw3.h>
 #include <logger.hpp>
 
-#include "ctx.hpp"
+#include "logUtil.hpp"
 INIT_CTX
 
 int main(int argc, char const* argv[])

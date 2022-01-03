@@ -3,14 +3,15 @@
 #include <glbinding/gl/gl.h>
 #include <logger.hpp>
 
-#include "ctx.hpp"
+#include "logUtil.hpp"
 INIT_CTX
 
 using namespace gl;
 
 GLuint createProgram(GLuint vert, GLuint frag)
 {
-    logger::info(CTX) << vert << " " << frag;
+    logger::debug(CTX) << "Creating program from vert " << vert << " and frag "
+                       << frag;
     if (vert == 0 || frag == 0)
     {
         return 0;

@@ -48,7 +48,8 @@ set(shared_include_dir ${include_dir}/shared)
 set(shared_source_dir ${source_dir}/shared)
 set(shared_sources
     ${shared_source_dir}/shader.cpp
-    ${shared_source_dir}/timer.cpp)
+    ${shared_source_dir}/timer.cpp
+    ${shared_source_dir}/uniforms.cpp)
 
 set(l2d_include_dir ${include_dir}/l2d)
 set(l2d_source_dir ${source_dir}/l2d)

@@ -14,8 +14,8 @@
 #include <logger.hpp>
 #include <macros.hpp>
 
-#include "ctx.hpp"
 #include "glfwError.hpp"
+#include "logUtil.hpp"
 #include "options.hpp"
 #include "renderer.hpp"
 #include "timer.hpp"

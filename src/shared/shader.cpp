@@ -6,7 +6,7 @@
 #include <glbinding/gl/gl.h>
 #include <logger.hpp>
 
-#include "ctx.hpp"
+#include "logUtil.hpp"
 INIT_CTX
 
 using namespace gl;

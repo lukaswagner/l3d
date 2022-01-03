@@ -2,7 +2,7 @@
 
 #include <logger.hpp>
 
-#include "ctx.hpp"
+#include "logUtil.hpp"
 INIT_CTX
 
 EffectPass::EffectPass(glm::uvec2 resolution, GLuint geometry)

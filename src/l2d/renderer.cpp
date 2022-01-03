@@ -6,9 +6,10 @@
 #include <logger.hpp>
 #include <macros.hpp>
 
-#include "ctx.hpp"
 #include "data.hpp"
+#include "logUtil.hpp"
 #include "program.hpp"
+#include "uniforms.hpp"
 INIT_CTX
 
 using namespace gl;
@@ -69,7 +70,15 @@ Renderer::Renderer(
         auto vertexLoc = glGetAttribLocation(program, "a_vertex");
         glEnableVertexAttribArray(vertexLoc);
         glVertexAttribPointer(vertexLoc, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
-        m_programs[shader] = {program, program != 0};
+
+        Uniforms uniforms(program, m_shader.source(shader));
+        auto resName = uniforms.matchComment("RESOLUTION");
+        if (resName.has_value())
+            logger::info(CTX)
+                << "Resolution uniform location: "
+                << uniforms.uniform(resName.value()).value().location;
+
+        m_programs[shader] = {program, program != 0, uniforms};
     }
 
     auto numValid = std::count_if(
