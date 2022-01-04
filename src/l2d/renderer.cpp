@@ -7,6 +7,7 @@
 #include <macros.hpp>
 
 #include "data.hpp"
+#include "dataSource/time.hpp"
 #include "logUtil.hpp"
 #include "program.hpp"
 #include "uniforms.hpp"
@@ -103,6 +104,18 @@ Renderer::Renderer(
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
+    // data sources
+
+    m_dataSources.emplace_back(Time());
+
+    for (auto&& p : m_programs)
+    {
+        for (auto&& s : m_dataSources)
+        {
+            s.addEffect(p.second);
+        }
+    }
+
     m_ready = true;
 }
 
@@ -126,13 +139,27 @@ void Renderer::frame(std::chrono::milliseconds deltaT)
         }
     }
 
+    for (auto&& s : m_dataSources)
+    {
+        s.update();
+    }
+
     glViewport(0, 0, m_resolution.x, m_resolution.y);
-    m_effectPasses[0].frame(m_currentProgram->second);
+    auto cur = m_currentProgram->second.handle;
+    glUseProgram(cur);
+    for (auto&& s : m_dataSources)
+    {
+        s.apply(cur);
+    }
+    m_effectPasses[0].frame();
 
     if (fading)
     {
-        m_effectPasses[1].frame(m_nextProgram->second);
+        auto next = m_nextProgram->second.handle;
+        glUseProgram(next);
+        m_effectPasses[1].frame();
     }
+    glUseProgram(0);
 
     float mixFactor = fading ? (1.0f - (float)m_currentFade.count() /
                                            (float)m_fadeDuration.count())

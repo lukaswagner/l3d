@@ -33,16 +33,14 @@ EffectPass::EffectPass(glm::uvec2 resolution, GLuint geometry)
 
 bool EffectPass::ready() { return m_ready; }
 
-void EffectPass::frame(const EffectProgram& program)
+void EffectPass::frame()
 {
     glBindFramebuffer(GL_FRAMEBUFFER, m_framebuffer);
-    glUseProgram(program.handle);
     glBindBuffer(GL_ARRAY_BUFFER, m_geometry);
 
     glDrawArrays(GL_TRIANGLES, 0, 3);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glUseProgram(0);
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }

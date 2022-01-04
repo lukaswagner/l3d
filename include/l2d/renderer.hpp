@@ -11,6 +11,7 @@
 #include <glbinding/gl/gl.h>
 #include <glm/vec2.hpp>
 
+#include "dataSource/base.hpp"
 #include "effectPass.hpp"
 #include "fadePass.hpp"
 #include "shader.hpp"
@@ -46,6 +47,8 @@ protected:
 
     std::chrono::milliseconds m_fadeDuration;
     std::chrono::milliseconds m_currentFade;
+
+    std::vector<DataSource> m_dataSources;
 
     ProgramIt nextProgram(ProgramIt start);
     ProgramIt nextValidProgram(ProgramIt start);

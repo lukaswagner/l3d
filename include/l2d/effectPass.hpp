@@ -21,6 +21,6 @@ public:
     EffectPass(glm::uvec2 resolution, GLuint geometry);
     EffectPass() = default;
     bool ready();
-    void frame(const EffectProgram& program);
+    void frame();
     GLuint texture();
 };
