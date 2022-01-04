@@ -47,6 +47,7 @@ set(source_dir src)
 set(shared_include_dir ${include_dir}/shared)
 set(shared_source_dir ${source_dir}/shared)
 set(shared_sources
+    ${shared_source_dir}/logUtil.cpp
     ${shared_source_dir}/shader.cpp
     ${shared_source_dir}/timer.cpp
     ${shared_source_dir}/uniforms.cpp

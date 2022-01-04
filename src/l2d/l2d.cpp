@@ -8,6 +8,7 @@
 
 #include <CLI/CLI.hpp>
 #include <GLFW/glfw3.h>
+#include <glbinding-aux/ContextInfo.h>
 #include <glbinding-aux/debug.h>
 #include <glbinding/glbinding.h>
 #include <glm/vec2.hpp>
@@ -48,13 +49,18 @@ int main(int argc, char const* argv[])
     glfwSetErrorCallback(logGlfwError);
 
     glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+    glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_FALSE);
     auto window = glfwCreateWindow(1, 1, "", nullptr, nullptr);
     glfwDefaultWindowHints();
     glfwMakeContextCurrent(window);
 
     // init glbinding
     glbinding::initialize(glfwGetProcAddress);
-    glbinding::aux::enableGetErrorCallback();
+    enableOglLogging();
+
+    logger::info(CTX) << "OpenGL "
+                      << glbinding::aux::ContextInfo::version().toString();
+    logger::info(CTX) << glbinding::aux::ContextInfo::renderer();
 
     // init shader manager
     auto shaderDir = std::filesystem::path(g_options.shaderDir);

@@ -106,13 +106,13 @@ Renderer::Renderer(
 
     // data sources
 
-    m_dataSources.emplace_back(Time());
+    m_dataSources.emplace_back(std::make_unique<Time>());
 
     for (auto&& p : m_programs)
     {
         for (auto&& s : m_dataSources)
         {
-            s.addEffect(p.second);
+            s->addEffect(p.second);
         }
     }
 
@@ -141,7 +141,7 @@ void Renderer::frame(std::chrono::milliseconds deltaT)
 
     for (auto&& s : m_dataSources)
     {
-        s.update();
+        s->update();
     }
 
     glViewport(0, 0, m_resolution.x, m_resolution.y);
@@ -149,7 +149,7 @@ void Renderer::frame(std::chrono::milliseconds deltaT)
     glUseProgram(cur);
     for (auto&& s : m_dataSources)
     {
-        s.apply(cur);
+        s->apply(cur);
     }
     m_effectPasses[0].frame();
 
@@ -157,6 +157,10 @@ void Renderer::frame(std::chrono::milliseconds deltaT)
     {
         auto next = m_nextProgram->second.handle;
         glUseProgram(next);
+        for (auto&& s : m_dataSources)
+        {
+            s->apply(next);
+        }
         m_effectPasses[1].frame();
     }
     glUseProgram(0);

@@ -13,7 +13,7 @@ struct Uniform
 {
     std::string name;
     std::string comment;
-    GLenum typ;
+    GLenum type;
     bool isArray;
     GLint size;
     GLuint location;

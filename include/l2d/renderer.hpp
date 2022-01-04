@@ -5,6 +5,7 @@
 #include <chrono>
 #include <filesystem>
 #include <map>
+#include <memory>
 #include <string>
 
 #include <GLFW/glfw3.h>
@@ -48,7 +49,7 @@ protected:
     std::chrono::milliseconds m_fadeDuration;
     std::chrono::milliseconds m_currentFade;
 
-    std::vector<DataSource> m_dataSources;
+    std::vector<std::unique_ptr<DataSource>> m_dataSources;
 
     ProgramIt nextProgram(ProgramIt start);
     ProgramIt nextValidProgram(ProgramIt start);

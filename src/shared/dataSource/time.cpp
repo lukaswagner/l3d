@@ -5,6 +5,7 @@
 #include <string>
 
 #include "logUtil.hpp"
+#include "uniforms.hpp"
 INIT_CTX
 
 std::string toLower(std::string s)
@@ -58,6 +59,8 @@ Time::Time()
 
 void Time::addEffect(EffectProgram program)
 {
+    logger::info(CTX) << "Searching for TIME uniforms in program "
+                      << program.handle;
     std::vector<handler> handlers;
 
     auto frame = program.uniforms.matchComment("TIME.FRAME");
@@ -66,17 +69,34 @@ void Time::addEffect(EffectProgram program)
 
     for (auto m : frame)
     {
-        auto location = program.uniforms.uniform(m.name).location;
-        handlers.push_back(
-            [location, this]()
-            {
-                glUniform1i(location, this->m_frame);
-            });
+        auto uniform = program.uniforms.uniform(m.name);
+        auto location = uniform.location;
+        auto type = uniform.type;
+        logger::info(CTX) << "TIME.FRAME at location " << location << ", type "
+                          << glbinding::aux::Meta::getString(type);
+        if (!ASSERT(type == GL_INT || type == GL_UNSIGNED_INT)) continue;
+        if (type == GL_INT)
+        {
+            handlers.push_back(
+                [location, this]()
+                {
+                    glUniform1i(location, this->m_frame);
+                });
+        }
+        else
+        {
+            handlers.push_back(
+                [location, this]()
+                {
+                    glUniform1ui(location, this->m_frame);
+                });
+        }
     }
 
     for (auto m : elapsed)
     {
         auto location = program.uniforms.uniform(m.name).location;
+        logger::info(CTX) << "TIME.ELAPSED at location " << location;
         std::string duration = "millis";
         if (m.match.size() > 1) duration = toLower(m.match[1].str());
 
@@ -112,7 +132,7 @@ void Time::update()
 
 void Time::apply(GLuint program)
 {
-    auto handers = m_handlers.at(program);
-    for (auto handler : handers)
+    auto handlers = m_handlers.at(program);
+    for (auto handler : handlers)
         handler();
 }

@@ -11,7 +11,7 @@ using namespace gl;
 class DataSource
 {
 public:
-    virtual void addEffect(EffectProgram program){};
-    virtual void update(){};
-    virtual void apply(GLuint program){};
+    virtual void addEffect(EffectProgram program) = 0;
+    virtual void update() = 0;
+    virtual void apply(GLuint program) = 0;
 };
