@@ -3,16 +3,10 @@
 #include <glbinding/gl/gl.h>
 #include <glm/vec2.hpp>
 
+#include "effectProgram.hpp"
 #include "uniforms.hpp"
 
 using namespace gl;
-
-struct EffectProgram
-{
-    GLuint handle;
-    bool valid;
-    Uniforms uniforms;
-};
 
 class EffectPass
 {

@@ -19,6 +19,12 @@ struct Uniform
     GLuint location;
 };
 
+struct Match
+{
+    std::string name;
+    std::smatch match;
+};
+
 class Uniforms
 {
 protected:
@@ -27,9 +33,7 @@ protected:
 public:
     Uniforms(){};
     Uniforms(GLuint program, std::string source);
-    std::optional<Uniform> uniform(std::string name);
-    std::optional<std::string> matchComment(
-        std::regex regex, std::smatch& match = std::smatch());
-    std::optional<std::string> matchComment(
-        std::string regex, std::smatch& match = std::smatch());
+    Uniform uniform(std::string name);
+    std::vector<Match> matchComment(std::regex regex);
+    std::vector<Match> matchComment(std::string regex);
 };

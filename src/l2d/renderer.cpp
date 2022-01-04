@@ -72,18 +72,20 @@ Renderer::Renderer(
         glVertexAttribPointer(vertexLoc, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
 
         Uniforms uniforms(program, m_shader.source(shader));
-        auto resName = uniforms.matchComment("RESOLUTION");
-        if (resName.has_value())
-            logger::info(CTX)
-                << "Resolution uniform location: "
-                << uniforms.uniform(resName.value()).value().location;
+        auto res = uniforms.matchComment("RESOLUTION");
+        if (!res.empty())
+            logger::info(CTX) << "Resolution uniform location: "
+                              << uniforms.uniform(res[0].name).location;
 
         m_programs[shader] = {program, program != 0, uniforms};
     }
 
     auto numValid = std::count_if(
         m_programs.begin(), m_programs.end(),
-        [](auto p) { return p.second.valid; });
+        [](auto p)
+        {
+            return p.second.valid;
+        });
     if (numValid == 0)
     {
         logger::error(CTX) << "No valid shader program.";

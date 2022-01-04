@@ -78,29 +78,30 @@ Uniforms::Uniforms(GLuint program, std::string source)
     }
 }
 
-std::optional<Uniform> Uniforms::uniform(std::string name)
+Uniform Uniforms::uniform(std::string name)
 {
-    std::optional<Uniform> result;
     auto findResult = std::find_if(
         m_uniforms.begin(), m_uniforms.end(),
-        [&](Uniform u) { return u.name == name; });
-    if (findResult != m_uniforms.end()) result = *findResult;
+        [&](Uniform u)
+        {
+            return u.name == name;
+        });
+    return *findResult;
+}
+
+std::vector<Match> Uniforms::matchComment(std::regex regex)
+{
+    std::vector<Match> result;
+    for (auto u : m_uniforms)
+    {
+        std::smatch match;
+        if (std::regex_search(u.comment, match, regex))
+            result.emplace_back(Match{u.name, match});
+    }
     return result;
 }
 
-std::optional<std::string> Uniforms::matchComment(
-    std::regex regex, std::smatch& match)
+std::vector<Match> Uniforms::matchComment(std::string regex)
 {
-    std::optional<std::string> result;
-    auto findResult = std::find_if(
-        m_uniforms.begin(), m_uniforms.end(),
-        [&](Uniform u) { return std::regex_search(u.comment, match, regex); });
-    if (findResult != m_uniforms.end()) result = findResult->name;
-    return result;
-}
-
-std::optional<std::string> Uniforms::matchComment(
-    std::string regex, std::smatch& match)
-{
-    return matchComment(std::regex(regex), match);
+    return matchComment(std::regex(regex));
 }

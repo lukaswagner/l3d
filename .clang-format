@@ -1,6 +1,7 @@
 AccessModifierOffset: -4
 AlignAfterOpenBracket: AlwaysBreak
 AllowShortIfStatementsOnASingleLine: WithoutElse
+AllowShortLambdasOnASingleLine: Empty
 AlwaysBreakTemplateDeclarations: Yes
 BreakBeforeBraces: Allman
 BreakConstructorInitializers: BeforeComma
